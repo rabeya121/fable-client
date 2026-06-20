@@ -25,13 +25,13 @@ const userLinks = [
 ];
 
 const writerLinks = [
-  { href: "/dashboard/writer", label: "Overview", icon: RiDashboardLine },
-  { href: "/dashboard/writer/ebooks", label: "My Ebooks", icon: RiBookOpenLine },
-  { href: "/dashboard/writer/add-ebook", label: "Add Ebook", icon: RiAddLine },
-  { href: "/dashboard/writer/sales", label: "Sales History", icon: RiMoneyDollarCircleLine },
-  { href: "/dashboard/writer/bookmarks", label: "Bookmarks", icon: RiHeartLine },
+  { href: "/dashboard/writer", label: "Home", icon: RiDashboardLine },
+  { href: "/dashboard/writer/ebooks", label: "Books", icon: RiBookOpenLine },
+  { href: "/dashboard/writer/bookmarks", label: "Bookmarked Books", icon: RiHeartLine },
+  { href: "/dashboard/writer/add-ebook", label: "Add a Book", icon: RiAddLine },
+  { href: "/dashboard/writer/sales", label: "Sales", icon: RiMoneyDollarCircleLine },
+  { href: "/dashboard/writer/profile", label: "Profile", icon: RiUserLine },
 ];
-
 const adminLinks = [
   { href: "/dashboard/admin", label: "Overview", icon: RiDashboardLine },
   { href: "/dashboard/admin/users", label: "Manage Users", icon: RiGroupLine },
