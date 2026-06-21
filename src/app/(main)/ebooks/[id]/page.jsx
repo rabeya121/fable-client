@@ -43,23 +43,27 @@ export default function EbookDetailsPage() {
     }
     setPurchasing(true);
     try {
-      const session = await fetch(`http://localhost:8000/api/purchases`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const res = await fetch(
+        `http://localhost:8000/api/payment/create-checkout`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ebookId: ebook._id,
+            ebookTitle: ebook.title,
+            price: ebook.price,
+            userEmail: user.email,
+          }),
         },
-        body: JSON.stringify({
-          ebookId: ebook._id,
-          ebookTitle: ebook.title,
-          price: ebook.price,
-        }),
-      });
-      const data = await session.json();
+      );
+      const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
+      } else {
+        toast.error("Payment failed!");
       }
-    } catch (error) {
-      toast.error("Purchase failed!");
+    } catch {
+      toast.error("Payment failed!");
     } finally {
       setPurchasing(false);
     }
