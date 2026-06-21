@@ -1,105 +1,105 @@
 "use client";
 import { useState, useEffect } from "react";
-import { RiGroupLine, RiDeleteBinLine, RiShieldLine } from "react-icons/ri";
-import toast from "react-hot-toast";
+import { RiMoneyDollarCircleLine } from "react-icons/ri";
 
-export default function AdminUsersPage() {
-  const [users, setUsers] = useState([]);
+export default function AdminTransactionsPage() {
+  const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/admin/users`)
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/transactions`)
       .then((res) => res.json())
-      .then((data) => setUsers(Array.isArray(data) ? data : []))
-      .catch(() => setUsers([]))
+      .then((data) => setTransactions(Array.isArray(data) ? data : []))
+      .catch(() => setTransactions([]))
       .finally(() => setLoading(false));
   }, []);
 
-  const handleRoleChange = async (email, role) => {
-    try {
-      await fetch(`http://localhost:8000/api/admin/users/${email}/role`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role }),
-      });
-      setUsers(users.map((u) => u.email === email ? { ...u, role } : u));
-      toast.success("Role updated!");
-    } catch {
-      toast.error("Failed!");
-    }
-  };
-
-  const handleDelete = async (email) => {
-    if (!confirm("Are you sure?")) return;
-    try {
-      await fetch(`http://localhost:8000/api/admin/users/${email}`, { method: "DELETE" });
-      setUsers(users.filter((u) => u.email !== email));
-      toast.success("User deleted!");
-    } catch {
-      toast.error("Failed!");
-    }
-  };
+  const totalRevenue = transactions.reduce(
+    (acc, t) => acc + (t.amount || 0),
+    0,
+  );
+  const completed = transactions.filter((t) => t.type === "purchase").length;
+  const pending = transactions.length - completed;
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white mb-1">Manage Users</h1>
-        <p className="text-gray-400">View and manage all users</p>
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-white mb-1 flex items-center gap-2">
+          Payments Overview 💳
+        </h1>
+        <p className="text-gray-400 text-sm">
+          Track all transactions between readers and writers.
+        </p>
       </div>
 
-      <div className="bg-[#1e293b] rounded-2xl border border-gray-800 overflow-hidden">
+      {/* Table */}
+      <div className="bg-[#1e293b] rounded-2xl border border-gray-800 overflow-hidden mb-6">
         {loading ? (
           <div className="p-6 space-y-3">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-14 bg-[#0f172a] rounded-lg animate-pulse" />
+              <div
+                key={i}
+                className="h-12 bg-[#0f172a] rounded-lg animate-pulse"
+              />
             ))}
           </div>
-        ) : users.length === 0 ? (
+        ) : transactions.length === 0 ? (
           <div className="text-center py-20">
-            <RiGroupLine className="text-5xl text-gray-600 mx-auto mb-3" />
-            <p className="text-gray-400">No users found!</p>
+            <RiMoneyDollarCircleLine className="text-5xl text-gray-600 mx-auto mb-3" />
+            <p className="text-gray-400">No transactions yet!</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-[#0f172a] text-gray-400 text-sm">
+              <thead className="text-gray-400 text-xs uppercase tracking-wider border-b border-gray-800">
                 <tr>
-                  <th className="text-left px-6 py-4">Name</th>
-                  <th className="text-left px-6 py-4">Email</th>
-                  <th className="text-left px-6 py-4">Role</th>
-                  <th className="text-left px-6 py-4">Actions</th>
+                  <th className="text-left px-6 py-4">Reader</th>
+                  <th className="text-left px-6 py-4">Writer</th>
+                  <th className="text-left px-6 py-4">Book</th>
+                  <th className="text-left px-6 py-4">Amount</th>
+                  <th className="text-left px-6 py-4">Status</th>
+                  <th className="text-left px-6 py-4">Date</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-800">
-                {users.map((user) => (
-                  <tr key={user._id} className="hover:bg-[#0f172a] transition">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-[#6366f1] flex items-center justify-center text-white font-bold text-sm">
-                          {user.name?.charAt(0)}
-                        </div>
-                        <span className="text-white text-sm font-medium">{user.name}</span>
-                      </div>
+              <tbody className="divide-y divide-gray-800/50">
+                {transactions.map((t, i) => (
+                  <tr key={i} className="hover:bg-[#0f172a]/30 transition">
+                    <td className="px-6 py-4 text-white text-sm font-medium">
+                      {t.userEmail?.split("@")[0] || "Unknown"}
                     </td>
-                    <td className="px-6 py-4 text-gray-400 text-sm">{user.email}</td>
-                    <td className="px-6 py-4">
-                      <select
-                        value={user.role || "user"}
-                        onChange={(e) => handleRoleChange(user.email, e.target.value)}
-                        className="bg-[#0f172a] text-white text-xs px-3 py-1.5 rounded-lg border border-gray-700 outline-none focus:ring-1 focus:ring-[#6366f1]"
-                      >
-                        <option value="user">User</option>
-                        <option value="writer">Writer</option>
-                        <option value="admin">Admin</option>
-                      </select>
+                    <td className="px-6 py-4 text-gray-300 text-sm">
+                      {t.writerName || t.writerEmail?.split("@")[0] || "N/A"}
+                    </td>
+                    <td className="px-6 py-4 text-gray-300 text-sm">
+                      {t.ebookTitle || "—"}
+                    </td>
+                    <td className="px-6 py-4 text-white text-sm font-semibold">
+                      ${t.amount}
                     </td>
                     <td className="px-6 py-4">
-                      <button
-                        onClick={() => handleDelete(user.email)}
-                        className="w-8 h-8 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center hover:bg-red-500/30 transition"
+                      <span
+                        className={`text-xs font-semibold px-3 py-1 rounded-full border ${
+                          t.type === "purchase"
+                            ? "bg-green-500/20 text-green-400 border-green-500/30"
+                            : t.type === "refund"
+                              ? "bg-red-500/20 text-red-400 border-red-500/30"
+                              : "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
+                        }`}
                       >
-                        <RiDeleteBinLine />
-                      </button>
+                        {t.type === "purchase"
+                          ? "Completed"
+                          : t.type === "refund"
+                            ? "Refunded"
+                            : "Pending"}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-gray-400 text-sm">
+                      {new Date(t.createdAt).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
                     </td>
                   </tr>
                 ))}
@@ -107,6 +107,24 @@ export default function AdminUsersPage() {
             </table>
           </div>
         )}
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="bg-[#1e293b] rounded-2xl p-5 border border-gray-800">
+          <p className="text-gray-400 text-xs mb-2">Total Revenue</p>
+          <p className="text-white text-2xl font-bold">
+            ${totalRevenue.toFixed(0)}
+          </p>
+        </div>
+        <div className="bg-[#1e293b] rounded-2xl p-5 border border-gray-800">
+          <p className="text-gray-400 text-xs mb-2">Completed</p>
+          <p className="text-white text-2xl font-bold">{completed}</p>
+        </div>
+        <div className="bg-[#1e293b] rounded-2xl p-5 border border-gray-800">
+          <p className="text-gray-400 text-xs mb-2">Pending / Refunded</p>
+          <p className="text-white text-2xl font-bold">{pending}</p>
+        </div>
       </div>
     </div>
   );
