@@ -1,21 +1,14 @@
 "use client";
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { RiHeartLine, RiBookOpenLine } from "react-icons/ri";
 
-export default function WriterBookmarksPage() {
-  const { user, isPending } = useAuth();
-  const router = useRouter();
+export default function UserBookmarksPage() {
+  const { user } = useAuth();
   const [bookmarks, setBookmarks] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!user && !isPending) {
-      router.push("/login");
-    }
-  }, [user, isPending]);
+  
 
   useEffect(() => {
     if (user?.email) {
@@ -30,8 +23,8 @@ export default function WriterBookmarksPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white mb-1">Bookmarked Books</h1>
-        <p className="text-gray-400">Books you saved for later</p>
+        <h1 className="text-2xl font-bold text-white mb-1">Bookmarks</h1>
+        <p className="text-gray-400">Ebooks you saved for later</p>
       </div>
 
       {loading ? (

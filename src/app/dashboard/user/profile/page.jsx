@@ -2,8 +2,6 @@
 import { useAuth } from "@/context/AuthContext";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { updateUser } from "@/lib/auth-client";
-
 import {
   RiBookOpenLine,
   RiHeartLine,
@@ -14,14 +12,12 @@ import {
   RiCloseLine,
   RiUserLine,
   RiShoppingBagLine,
-  RiBarChartLine,
-  RiCheckboxCircleLine,
 } from "react-icons/ri";
+import { updateUser } from "@/lib/auth-client";
 import toast from "react-hot-toast";
 
-export default function WriterProfilePage() {
+export default function UserProfilePage() {
   const { user } = useAuth();
-  const [ebooks, setEbooks] = useState([]);
   const [bookmarks, setBookmarks] = useState([]);
   const [purchases, setPurchases] = useState([]);
   const [editing, setEditing] = useState(false);
@@ -38,16 +34,11 @@ export default function WriterProfilePage() {
 
   useEffect(() => {
     if (user?.email) {
-      fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/ebooks/writer/${user.email}`,
-      )
-        .then((r) => r.json())
-        .then((d) => setEbooks(Array.isArray(d) ? d : []))
-        .catch(() => setEbooks([]));
       fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/bookmarks/${user.email}`)
         .then((r) => r.json())
         .then((d) => setBookmarks(Array.isArray(d) ? d : []))
         .catch(() => setBookmarks([]));
+
       fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/purchases/${user.email}`)
         .then((r) => r.json())
         .then((d) => setPurchases(Array.isArray(d) ? d : []))
@@ -60,7 +51,6 @@ export default function WriterProfilePage() {
     if (!file) return;
     setImageUploading(true);
     try {
-      // ১. ImgBB তে upload
       const formData = new FormData();
       formData.append("image", file);
       const res = await fetch(
@@ -70,11 +60,8 @@ export default function WriterProfilePage() {
       const data = await res.json();
       const imageUrl = data.data.url;
       setProfileImage(imageUrl);
-
-      // ২. Better-Auth দিয়ে session update
       await updateUser({ image: imageUrl });
-
-      toast.success("Profile image updated!");
+      toast.success("Image updated!");
     } catch {
       toast.error("Upload failed!");
     } finally {
@@ -84,19 +71,7 @@ export default function WriterProfilePage() {
 
   const handleSave = async () => {
     try {
-      // ১. Backend এ save
-      await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/users/${user.email}/profile`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, image: profileImage }),
-        },
-      );
-
-      // ২. Better-Auth session update
       await updateUser({ name, image: profileImage });
-
       toast.success("Profile updated!");
       setEditing(false);
     } catch {
@@ -108,10 +83,7 @@ export default function WriterProfilePage() {
     <div className="space-y-6">
       {/* Profile Banner */}
       <div className="bg-[#1e293b] rounded-2xl border border-gray-800 overflow-hidden">
-        {/* Cover */}
-        <div className="h-32 bg-gradient-to-r from-[#6366f1]/30 via-[#1e293b] to-[#0f172a]" />
-
-        {/* Info Row */}
+        <div className="h-32 bg-gradient-to-r from-[#6366f1]/20 via-[#1e293b] to-[#0f172a]" />
         <div className="px-6 pb-6 -mt-10 flex flex-col md:flex-row items-start md:items-end gap-4">
           {/* Avatar */}
           <div className="relative shrink-0">
@@ -140,7 +112,7 @@ export default function WriterProfilePage() {
             <div className="absolute bottom-1 right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-[#1e293b]" />
           </div>
 
-          {/* Name + meta */}
+          {/* Name + Meta */}
           <div className="flex-1">
             {editing ? (
               <input
@@ -153,8 +125,8 @@ export default function WriterProfilePage() {
               <h2 className="text-white text-2xl font-bold">{user?.name}</h2>
             )}
             <div className="flex flex-wrap items-center gap-3 mt-1">
-              <span className="bg-blue-500/20 text-blue-400 text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
-                <RiUserLine /> {user?.role || "Writer"}
+              <span className="bg-green-500/20 text-green-400 text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
+                <RiUserLine /> {user?.role || "Reader"}
               </span>
               <span className="text-gray-400 text-xs">✉ {user?.email}</span>
               <span className="text-gray-400 text-xs">
@@ -170,7 +142,7 @@ export default function WriterProfilePage() {
             </div>
           </div>
 
-          {/* Action Buttons */}
+          {/* Buttons */}
           <div className="flex gap-2 flex-wrap">
             {editing ? (
               <>
@@ -190,13 +162,13 @@ export default function WriterProfilePage() {
             ) : (
               <>
                 <Link
-                  href="/dashboard/writer/ebooks"
+                  href="/dashboard/user/purchases"
                   className="flex items-center gap-2 bg-[#0f172a] border border-gray-700 hover:border-[#6366f1]/40 text-white text-xs px-4 py-2 rounded-xl transition"
                 >
                   <RiBookOpenLine /> My Ebooks
                 </Link>
                 <Link
-                  href="/dashboard/writer/bookmarks"
+                  href="/dashboard/user/bookmarks"
                   className="flex items-center gap-2 bg-[#0f172a] border border-gray-700 hover:border-[#6366f1]/40 text-white text-xs px-4 py-2 rounded-xl transition"
                 >
                   <RiHeartLine /> Bookmarks
@@ -270,9 +242,7 @@ export default function WriterProfilePage() {
           <h3 className="text-white font-semibold text-lg mb-4">
             Recent Activity
           </h3>
-
           <div className="space-y-3">
-            {/* Purchases */}
             {purchases.slice(0, 2).map((purchase, i) => (
               <div
                 key={i}
@@ -289,7 +259,11 @@ export default function WriterProfilePage() {
                     <p className="text-gray-500 text-xs">
                       {new Date(purchase.purchasedAt).toLocaleDateString(
                         "en-US",
-                        { month: "short", day: "numeric", year: "numeric" },
+                        {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        },
                       )}
                     </p>
                   </div>
@@ -300,8 +274,7 @@ export default function WriterProfilePage() {
               </div>
             ))}
 
-            {/* Bookmarks */}
-            {bookmarks.slice(0, 1).map((bookmark, i) => (
+            {bookmarks.slice(0, 2).map((bookmark, i) => (
               <div
                 key={i}
                 className="flex items-center justify-between p-3 border-b border-gray-700/50"
@@ -312,7 +285,7 @@ export default function WriterProfilePage() {
                   </div>
                   <div>
                     <p className="text-gray-200 text-sm">
-                      Bookmarked "{bookmark.title || bookmark.ebookTitle}"
+                      Bookmarked "{bookmark.title}"
                     </p>
                     <p className="text-gray-500 text-xs">Recently</p>
                   </div>
@@ -323,43 +296,11 @@ export default function WriterProfilePage() {
               </div>
             ))}
 
-            {/* Published Ebooks */}
-            {ebooks.slice(0, 1).map((ebook) => (
-              <div
-                key={ebook._id}
-                className="flex items-center justify-between p-3 border-b border-gray-700/50"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
-                    <RiBookOpenLine className="text-blue-400 text-sm" />
-                  </div>
-                  <div>
-                    <p className="text-gray-200 text-sm">
-                      Published "{ebook.title}"
-                    </p>
-                    <p className="text-gray-500 text-xs">
-                      {new Date(ebook.createdAt).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </p>
-                  </div>
-                </div>
-                <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full">
-                  Published
-                </span>
-              </div>
-            ))}
-
-            {/* Fallback */}
-            {purchases.length === 0 &&
-              bookmarks.length === 0 &&
-              ebooks.length === 0 && (
-                <p className="text-gray-500 text-sm text-center py-8">
-                  No recent activity
-                </p>
-              )}
+            {purchases.length === 0 && bookmarks.length === 0 && (
+              <p className="text-gray-500 text-sm text-center py-8">
+                No recent activity
+              </p>
+            )}
           </div>
         </div>
 
@@ -396,68 +337,47 @@ export default function WriterProfilePage() {
             <div className="flex items-center justify-between">
               <span className="text-gray-400 text-sm">Account Type</span>
               <span className="text-gray-300 text-sm font-medium capitalize">
-                {user?.role || "Writer"}
+                {user?.role || "Reader"}
               </span>
             </div>
           </div>
         </div>
 
         {/* Quick Links */}
-        <div className="space-y-4">
-          {/* My Library + Saved Books - side by side */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-[#1e293b] border border-gray-800 rounded-2xl p-5 flex flex-col justify-between">
-              <div>
-                <RiBookOpenLine className="text-gray-400 text-2xl mb-3" />
-                <h3 className="text-white font-semibold mb-1 text-sm">
-                  My Library
-                </h3>
-                <p className="text-gray-400 text-xs">
-                  View all your purchased ebooks
-                </p>
-              </div>
-              <Link
-                href="/dashboard/writer/ebooks"
-                className="mt-4 inline-block bg-[#0f172a] border border-gray-700 hover:border-[#6366f1]/40 text-white text-xs px-3 py-2 rounded-xl transition text-center"
-              >
-                Go to Library →
-              </Link>
+        {/* Quick Links */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-[#1e293b] border border-gray-800 rounded-2xl p-4 flex flex-col justify-between">
+            <div>
+              <RiBookOpenLine className="text-gray-400 text-xl mb-2" />
+              <h3 className="text-white font-semibold mb-1 text-xs">
+                My Library
+              </h3>
+              <p className="text-gray-400 text-xs">
+                View all your purchased ebooks
+              </p>
             </div>
-
-            <div className="bg-purple-600 rounded-2xl p-5 flex flex-col justify-between">
-              <div>
-                <RiHeartLine className="text-white text-2xl mb-3" />
-                <h3 className="text-white font-semibold mb-1 text-sm">
-                  Saved Books
-                </h3>
-                <p className="text-white/70 text-xs">Manage your bookmarks</p>
-              </div>
-              <Link
-                href="/dashboard/writer/bookmarks"
-                className="mt-4 inline-block bg-white/20 hover:bg-white/30 text-white text-xs px-3 py-2 rounded-xl transition text-center"
-              >
-                View Bookmarks →
-              </Link>
-            </div>
+            <Link
+              href="/dashboard/user/purchases"
+              className="mt-3 inline-block bg-[#0f172a] border border-gray-700 hover:border-[#6366f1]/40 text-white text-xs px-3 py-1.5 rounded-xl transition text-center"
+            >
+              Go to Library →
+            </Link>
           </div>
 
-          {/* Writer Dashboard - full width */}
-          <div className="bg-green-600 rounded-2xl p-6 flex items-center justify-between">
+          <div className="bg-purple-600 rounded-2xl p-4 flex flex-col justify-between">
             <div>
-              <h3 className="text-white font-semibold mb-1">
-                Writer Dashboard
+              <RiHeartLine className="text-white text-xl mb-2" />
+              <h3 className="text-white font-semibold mb-1 text-xs">
+                Saved Books
               </h3>
-              <p className="text-white/70 text-sm">
-                Manage your ebooks and sales
-              </p>
-              <Link
-                href="/dashboard/writer"
-                className="mt-3 inline-block bg-white/20 hover:bg-white/30 text-white text-sm px-4 py-2 rounded-xl transition"
-              >
-                Go to Writer Dashboard →
-              </Link>
+              <p className="text-white/70 text-xs">Manage your bookmarks</p>
             </div>
-            <RiBarChartLine className="text-white text-4xl" />
+            <Link
+              href="/dashboard/user/bookmarks"
+              className="mt-3 inline-block bg-white/20 hover:bg-white/30 text-white text-xs px-3 py-1.5 rounded-xl transition text-center"
+            >
+              View Bookmarks →
+            </Link>
           </div>
         </div>
       </div>

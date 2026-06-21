@@ -15,16 +15,24 @@ export default function WriterDashboard() {
   const { user } = useAuth();
   const [ebooks, setEbooks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [bookmarks, setBookmarks] = useState([]);
 
   useEffect(() => {
-    if (user?.email) {
-      fetch(`http://localhost:8000/api/ebooks/writer/${user.email}`)
-        .then((res) => res.json())
-        .then((data) => setEbooks(Array.isArray(data) ? data : []))
-        .catch(() => setEbooks([]))
-        .finally(() => setLoading(false));
-    }
-  }, [user]);
+  if (user?.email) {
+    // ebooks fetch
+    fetch(`http://localhost:8000/api/ebooks/writer/${user.email}`)
+      .then((res) => res.json())
+      .then((data) => setEbooks(Array.isArray(data) ? data : []))
+      .catch(() => setEbooks([]))
+      .finally(() => setLoading(false));
+
+    // bookmarks fetch
+    fetch(`http://localhost:8000/api/bookmarks/${user.email}`)
+      .then((res) => res.json())
+      .then((data) => setBookmarks(Array.isArray(data) ? data : []))
+      .catch(() => setBookmarks([]));
+  }
+}, [user]);
 
   const totalSales = ebooks.reduce((acc, e) => acc + (e.sales || 0), 0);
   const totalRevenue = ebooks.reduce(
@@ -33,32 +41,12 @@ export default function WriterDashboard() {
   );
   const totalBookmarks = 0;
 
-  const stats = [
-    {
-      label: "Published Stories",
-      value: ebooks.length,
-      icon: RiBookOpenLine,
-      color: "bg-blue-500/20 text-blue-400",
-    },
-    {
-      label: "Total Sales",
-      value: totalSales,
-      icon: RiMoneyDollarCircleLine,
-      color: "bg-yellow-500/20 text-yellow-400",
-    },
-    {
-      label: "Bookmarks",
-      value: totalBookmarks,
-      icon: RiHeartLine,
-      color: "bg-pink-500/20 text-pink-400",
-    },
-    {
-      label: "Revenue",
-      value: `$${totalRevenue.toFixed(2)}`,
-      icon: RiDashboardLine,
-      color: "bg-green-500/20 text-green-400",
-    },
-  ];
+ const stats = [
+  { label: "Published Stories", value: ebooks.length, icon: RiBookOpenLine, color: "bg-blue-500/20 text-blue-400" },
+  { label: "Total Sales", value: totalSales, icon: RiMoneyDollarCircleLine, color: "bg-yellow-500/20 text-yellow-400" },
+  { label: "Bookmarks", value: bookmarks.length, icon: RiHeartLine, color: "bg-pink-500/20 text-pink-400" },
+  { label: "Revenue", value: `$${totalRevenue.toFixed(2)}`, icon: RiDashboardLine, color: "bg-green-500/20 text-green-400" },
+];
 
   return (
     <div>
