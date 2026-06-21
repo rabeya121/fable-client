@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { RiGroupLine, RiDeleteBinLine, RiShieldLine } from "react-icons/ri";
+import { RiGroupLine, RiDeleteBinLine } from "react-icons/ri";
 import toast from "react-hot-toast";
 
 export default function AdminUsersPage() {
@@ -8,7 +8,7 @@ export default function AdminUsersPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/admin/users`)
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/users`)
       .then((res) => res.json())
       .then((data) => setUsers(Array.isArray(data) ? data : []))
       .catch(() => setUsers([]))
@@ -17,7 +17,7 @@ export default function AdminUsersPage() {
 
   const handleRoleChange = async (email, role) => {
     try {
-      await fetch(`http://localhost:8000/api/admin/users/${email}/role`, {
+      await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/users/${email}/role`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role }),
@@ -32,7 +32,9 @@ export default function AdminUsersPage() {
   const handleDelete = async (email) => {
     if (!confirm("Are you sure?")) return;
     try {
-      await fetch(`http://localhost:8000/api/admin/users/${email}`, { method: "DELETE" });
+      await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/users/${email}`, {
+        method: "DELETE",
+      });
       setUsers(users.filter((u) => u.email !== email));
       toast.success("User deleted!");
     } catch {
@@ -44,7 +46,7 @@ export default function AdminUsersPage() {
     <div>
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-white mb-1">Manage Users</h1>
-        <p className="text-gray-400">View and manage all users</p>
+        <p className="text-gray-400 text-sm">View and manage all users on the platform</p>
       </div>
 
       <div className="bg-[#1e293b] rounded-2xl border border-gray-800 overflow-hidden">
@@ -62,7 +64,7 @@ export default function AdminUsersPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-[#0f172a] text-gray-400 text-sm">
+              <thead className="bg-[#0f172a] text-gray-400 text-xs uppercase tracking-wider">
                 <tr>
                   <th className="text-left px-6 py-4">Name</th>
                   <th className="text-left px-6 py-4">Email</th>
@@ -72,11 +74,15 @@ export default function AdminUsersPage() {
               </thead>
               <tbody className="divide-y divide-gray-800">
                 {users.map((user) => (
-                  <tr key={user._id} className="hover:bg-[#0f172a] transition">
+                  <tr key={user._id} className="hover:bg-[#0f172a]/50 transition">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-[#6366f1] flex items-center justify-center text-white font-bold text-sm">
-                          {user.name?.charAt(0)}
+                        <div className="w-9 h-9 rounded-full bg-[#6366f1] overflow-hidden flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                          {user.image ? (
+                            <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
+                          ) : (
+                            user.name?.charAt(0)
+                          )}
                         </div>
                         <span className="text-white text-sm font-medium">{user.name}</span>
                       </div>
