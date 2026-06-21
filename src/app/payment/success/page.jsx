@@ -15,16 +15,25 @@ function SuccessContent() {
 
   useEffect(() => {
     if (ebookId && userEmail) {
-      fetch(`http://localhost:8000/api/payment/save-purchase`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ebookId,
-          userEmail,
-          ebookTitle: "Purchased Ebook",
-          price: 0,
-        }),
-      });
+      // আগে ebook details fetch করো
+      fetch(`http://localhost:8000/api/ebooks/${ebookId}`)
+        .then((res) => res.json())
+        .then((ebook) => {
+          // তারপর purchase save করো
+          fetch(`http://localhost:8000/api/payment/save-purchase`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              ebookId,
+              userEmail,
+              ebookTitle: ebook.title,
+              price: ebook.price,
+              writerEmail: ebook.writerEmail,
+              writerName: ebook.writerName,
+              coverImage: ebook.coverImage,
+            }),
+          });
+        });
     }
   }, [ebookId, userEmail]);
 
@@ -32,8 +41,12 @@ function SuccessContent() {
     <div className="min-h-screen bg-[#0f172a] flex items-center justify-center px-4">
       <div className="bg-[#1e293b] rounded-2xl p-10 max-w-md w-full text-center border border-gray-800">
         <RiCheckboxCircleLine className="text-7xl text-green-400 mx-auto mb-4" />
-        <h1 className="text-2xl font-bold text-white mb-2">Payment Successful!</h1>
-        <p className="text-gray-400 mb-8">Your ebook has been purchased successfully.</p>
+        <h1 className="text-2xl font-bold text-white mb-2">
+          Payment Successful!
+        </h1>
+        <p className="text-gray-400 mb-8">
+          Your ebook has been purchased successfully.
+        </p>
         <div className="flex gap-3 justify-center">
           <Link
             href="/dashboard/user/purchases"
