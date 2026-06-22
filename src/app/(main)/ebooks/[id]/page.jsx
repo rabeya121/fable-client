@@ -65,7 +65,7 @@ export default function EbookDetailsPage() {
   const handlePurchase = async () => {
     if (!user) {
       toast.error("Please login to purchase!");
-      router.push("/login");
+      router.push(`/login?callbackUrl=/ebooks/${id}`);
       return;
     }
     setPurchasing(true);
@@ -81,7 +81,7 @@ export default function EbookDetailsPage() {
             price: ebook.price,
             userEmail: user.email,
           }),
-        }
+        },
       );
       const data = await res.json();
       if (data.url) {
@@ -110,7 +110,7 @@ export default function EbookDetailsPage() {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ userEmail: user.email }),
-          }
+          },
         );
         setBookmarked(false);
         toast.success("Bookmark removed!");
@@ -153,8 +153,13 @@ export default function EbookDetailsPage() {
       <div className="min-h-screen bg-[#0f172a] flex flex-col items-center justify-center text-white">
         <RiBookOpenLine className="text-8xl text-gray-600 mb-4" />
         <h2 className="text-2xl font-bold mb-2">Ebook not found</h2>
-        <p className="text-gray-400 mb-6">The ebook you are looking for does not exist.</p>
-        <Link href="/browse" className="bg-[#6366f1] hover:bg-[#4f46e5] text-white px-6 py-3 rounded-xl transition">
+        <p className="text-gray-400 mb-6">
+          The ebook you are looking for does not exist.
+        </p>
+        <Link
+          href="/browse"
+          className="bg-[#6366f1] hover:bg-[#4f46e5] text-white px-6 py-3 rounded-xl transition"
+        >
           Browse Ebooks
         </Link>
       </div>
@@ -166,7 +171,6 @@ export default function EbookDetailsPage() {
   return (
     <div className="min-h-screen bg-[#0f172a] px-4 py-10">
       <div className="max-w-5xl mx-auto">
-
         {/* Back */}
         <Link
           href="/browse"
@@ -176,7 +180,6 @@ export default function EbookDetailsPage() {
         </Link>
 
         <div className="flex flex-col md:flex-row gap-10">
-
           {/* Cover Image */}
           <div className="w-full md:w-72 flex-shrink-0">
             <div className="h-96 bg-[#1e293b] rounded-2xl overflow-hidden border border-gray-800 shadow-xl">
@@ -210,7 +213,9 @@ export default function EbookDetailsPage() {
                 </div>
                 <div>
                   <p className="text-gray-500 text-xs">Total Sales</p>
-                  <p className="text-white font-medium">{ebook.sales || 0} copies</p>
+                  <p className="text-white font-medium">
+                    {ebook.sales || 0} copies
+                  </p>
                 </div>
               </div>
               <div className="flex items-center gap-3 text-sm">
@@ -221,7 +226,9 @@ export default function EbookDetailsPage() {
                   <p className="text-gray-500 text-xs">Published</p>
                   <p className="text-white font-medium">
                     {new Date(ebook.createdAt).toLocaleDateString("en-US", {
-                      month: "short", day: "numeric", year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
                     })}
                   </p>
                 </div>
@@ -231,14 +238,17 @@ export default function EbookDetailsPage() {
 
           {/* Info */}
           <div className="flex-1">
-
             {/* Title + Bookmark */}
             <div className="flex items-start justify-between gap-4 mb-3">
-              <h1 className="text-3xl font-bold text-white leading-tight">{ebook.title}</h1>
+              <h1 className="text-3xl font-bold text-white leading-tight">
+                {ebook.title}
+              </h1>
               <button
                 onClick={handleBookmark}
                 className={`text-2xl transition hover:scale-110 flex-shrink-0 ${
-                  bookmarked ? "text-red-500" : "text-gray-500 hover:text-red-400"
+                  bookmarked
+                    ? "text-red-500"
+                    : "text-gray-500 hover:text-red-400"
                 }`}
               >
                 {bookmarked ? <RiHeartFill /> : <RiHeartLine />}
@@ -261,11 +271,13 @@ export default function EbookDetailsPage() {
               <span className="bg-[#6366f1]/20 text-[#6366f1] px-3 py-1 rounded-full text-xs font-semibold">
                 {ebook.genre}
               </span>
-              <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                ebook.status === "published"
-                  ? "bg-green-500/20 text-green-400"
-                  : "bg-red-500/20 text-red-400"
-              }`}>
+              <span
+                className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                  ebook.status === "published"
+                    ? "bg-green-500/20 text-green-400"
+                    : "bg-red-500/20 text-red-400"
+                }`}
+              >
                 {ebook.status === "published" ? "Available" : "Unavailable"}
               </span>
             </div>
@@ -273,7 +285,9 @@ export default function EbookDetailsPage() {
             {/* Description */}
             <div className="bg-[#1e293b] rounded-2xl p-5 border border-gray-800 mb-6">
               <h3 className="text-white font-semibold mb-3">About this book</h3>
-              <p className="text-gray-300 leading-relaxed text-sm">{ebook.description}</p>
+              <p className="text-gray-300 leading-relaxed text-sm">
+                {ebook.description}
+              </p>
             </div>
 
             {/* Price + Button */}
@@ -281,7 +295,9 @@ export default function EbookDetailsPage() {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <p className="text-gray-400 text-xs mb-1">Price</p>
-                  <p className="text-3xl font-bold text-white">${ebook.price}</p>
+                  <p className="text-3xl font-bold text-white">
+                    ${ebook.price}
+                  </p>
                 </div>
                 {purchased && (
                   <span className="flex items-center gap-1 text-green-400 text-sm font-semibold bg-green-500/10 px-3 py-1 rounded-full">
@@ -316,7 +332,13 @@ export default function EbookDetailsPage() {
 
               {!user && (
                 <p className="text-gray-500 text-xs text-center mt-3">
-                  <Link href="/login" className="text-[#6366f1] hover:underline">Login</Link> to purchase this ebook
+                  <Link
+                    href="/login"
+                    className="text-[#6366f1] hover:underline"
+                  >
+                    Login
+                  </Link>{" "}
+                  to purchase this ebook
                 </p>
               )}
             </div>

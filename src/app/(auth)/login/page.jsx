@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { signIn } from "@/lib/auth-client";
 import { RiBookOpenLine, RiEyeLine, RiEyeOffLine } from "react-icons/ri";
 import toast from "react-hot-toast";
+import { useSearchParams } from "next/navigation";
 
 const roles = [
   {
@@ -30,7 +31,8 @@ export default function LoginPage() {
   const [selectedRole, setSelectedRole] = useState("user");
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
-
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect");
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -51,16 +53,18 @@ export default function LoginPage() {
 
       toast.success("Login successful!");
 
-      // Database থেকে role নিয়ে redirect
       const userRole = result?.data?.user?.role || selectedRole;
 
-      if (userRole === "admin") {
-        router.push("/dashboard/admin");
-      } else if (userRole === "writer") {
-        router.push("/dashboard/writer");
+      // ✅ callbackUrl বা redirect থাকলে সেখানে যাও
+      const callbackUrl =
+        searchParams.get("callbackUrl") || searchParams.get("redirect");
+
+      if (callbackUrl) {
+        router.push(callbackUrl);
       } else {
-        router.push("/dashboard/user");
+        router.push("/");
       }
+
       router.refresh();
     } catch (error) {
       toast.error("Invalid email or password!");
