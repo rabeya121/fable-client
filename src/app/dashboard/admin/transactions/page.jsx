@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { RiMoneyDollarCircleLine } from "react-icons/ri";
+import toast from "react-hot-toast";
 
 export default function AdminTransactionsPage() {
   const [transactions, setTransactions] = useState([]);
@@ -18,8 +19,8 @@ export default function AdminTransactionsPage() {
     (acc, t) => acc + (t.amount || 0),
     0,
   );
-  const completed = transactions.filter((t) => t.type === "purchase").length;
-  const pending = transactions.length - completed;
+  const completed = transactions.filter((t) => (t.status || "completed") === "completed").length;
+const pending = transactions.filter((t) => (t.status || "completed") === "pending" || (t.status || "completed") === "refunded").length;
 
   return (
     <div>
@@ -78,21 +79,43 @@ export default function AdminTransactionsPage() {
                       ${t.amount}
                     </td>
                     <td className="px-6 py-4">
-                      <span
-                        className={`text-xs font-semibold px-3 py-1 rounded-full border ${
-                          t.type === "purchase"
+                      <select
+                        value={t.status || "completed"}
+                        onChange={async (e) => {
+                          const newStatus = e.target.value;
+                          try {
+                            await fetch(
+                              `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/transactions/${t._id}/status`,
+                              {
+                                method: "PATCH",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ status: newStatus }),
+                              },
+                            );
+                            setTransactions((prev) =>
+                              prev.map((tr) =>
+                                tr._id === t._id
+                                  ? { ...tr, status: newStatus }
+                                  : tr,
+                              ),
+                            );
+                            toast.success("Status updated!");
+                          } catch {
+                            toast.error("Failed!");
+                          }
+                        }}
+                        className={`text-xs font-semibold px-3 py-1 rounded-full border outline-none cursor-pointer bg-transparent ${
+                          (t.status || "completed") === "completed"
                             ? "bg-green-500/20 text-green-400 border-green-500/30"
-                            : t.type === "refund"
+                            : (t.status || "completed") === "refunded"
                               ? "bg-red-500/20 text-red-400 border-red-500/30"
                               : "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
                         }`}
                       >
-                        {t.type === "purchase"
-                          ? "Completed"
-                          : t.type === "refund"
-                            ? "Refunded"
-                            : "Pending"}
-                      </span>
+                        <option value="completed">Completed</option>
+                        <option value="pending">Pending</option>
+                        <option value="refunded">Refunded</option>
+                      </select>
                     </td>
                     <td className="px-6 py-4 text-gray-400 text-sm">
                       {new Date(t.createdAt).toLocaleDateString("en-US", {
