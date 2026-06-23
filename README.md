@@ -7,8 +7,8 @@ Fable is a modern digital platform that connects ebook lovers and readers with t
 🔗 [https://your-fable-live-url.vercel.app](https://your-fable-live-url.vercel.app)
 
 > **Admin Credentials**
-> - Email: `admin@fable.com`
-> - Password: `Admin@123`
+> - Email: `rabeya@gmail.com`
+> - Password: `Rabeya123`
 
 ---
 
@@ -23,7 +23,7 @@ Traditional ebook reading is often limited to bookstores or libraries. Fable dem
 ### 👤 Authentication
 - Email/password registration and login
 - Google OAuth login via BetterAuth
-- JWT-based session management (expires in 7 days)
+- Better-Auth session management (expires in 7 days)
 - Role selection after registration: **User (Reader)** or **Writer**
 
 ### 📖 Browse & Discovery

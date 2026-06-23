@@ -10,7 +10,7 @@ export default function WriterSalesPage() {
 
   useEffect(() => {
     if (user?.email) {
-      fetch(`http://localhost:8000/api/sales/writer/${user.email}`)
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/sales/writer/${user.email}`)
         .then((res) => res.json())
         .then((data) => setSales(Array.isArray(data) ? data : []))
         .catch(() => setSales([]))

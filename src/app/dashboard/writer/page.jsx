@@ -21,21 +21,21 @@ export default function WriterDashboard() {
   useEffect(() => {
     if (user?.email) {
       // ebooks fetch
-      fetch(`http://localhost:8000/api/ebooks/writer/${user.email}`)
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ebooks/writer/${user.email}`)
         .then((res) => res.json())
         .then((data) => setEbooks(Array.isArray(data) ? data : []))
         .catch(() => setEbooks([]))
         .finally(() => setLoading(false));
 
       // bookmarks fetch
-      fetch(`http://localhost:8000/api/bookmarks/${user.email}`)
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/bookmarks/${user.email}`)
         .then((res) => res.json())
         .then((data) => setBookmarks(Array.isArray(data) ? data : []))
         .catch(() => setBookmarks([]));
     }
 
     // sales fetch
-    fetch(`http://localhost:8000/api/sales/writer/${user.email}`)
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/sales/writer/${user.email}`)
       .then((res) => res.json())
       .then((data) => setSales(Array.isArray(data) ? data : []))
       .catch(() => setSales([]));

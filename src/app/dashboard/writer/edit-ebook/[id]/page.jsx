@@ -26,7 +26,7 @@ export default function EditEbookPage() {
   });
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/ebooks/${id}`)
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ebooks/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setFormData({
@@ -72,7 +72,7 @@ export default function EditEbookPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:8000/api/ebooks/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ebooks/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

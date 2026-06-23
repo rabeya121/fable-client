@@ -8,7 +8,7 @@ export default function AdminEbooksPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/admin/ebooks`)
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/ebooks`)
       .then((res) => res.json())
       .then((data) => setEbooks(Array.isArray(data) ? data : []))
       .catch(() => setEbooks([]))
@@ -18,7 +18,7 @@ export default function AdminEbooksPage() {
   const handleToggleStatus = async (id, currentStatus) => {
     const newStatus = currentStatus === "published" ? "unpublished" : "published";
     try {
-      await fetch(`http://localhost:8000/api/ebooks/${id}/status`, {
+      await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ebooks/${id}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
@@ -33,7 +33,7 @@ export default function AdminEbooksPage() {
   const handleDelete = async (id) => {
     if (!confirm("Are you sure?")) return;
     try {
-      await fetch(`http://localhost:8000/api/ebooks/${id}`, { method: "DELETE" });
+      await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ebooks/${id}`, { method: "DELETE" });
       setEbooks(ebooks.filter((e) => e._id !== id));
       toast.success("Ebook deleted!");
     } catch {

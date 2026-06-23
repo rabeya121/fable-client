@@ -29,7 +29,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/admin/analytics`)
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/analytics`)
       .then((res) => res.json())
       .then((data) => setAnalytics(data))
       .catch(() => setAnalytics(null))

@@ -19,7 +19,7 @@ export default function WriterBookmarksPage() {
 
   useEffect(() => {
     if (user?.email) {
-      fetch(`http://localhost:8000/api/bookmarks/${user.email}`)
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/bookmarks/${user.email}`)
         .then((res) => res.json())
         .then((data) => setBookmarks(Array.isArray(data) ? data : []))
         .catch(() => setBookmarks([]))

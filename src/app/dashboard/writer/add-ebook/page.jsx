@@ -56,7 +56,7 @@ export default function AddEbookPage() {
     }
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:8000/api/ebooks`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ebooks`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -76,7 +76,7 @@ function BrowsePageContent() {
         params.set("limit", ITEMS_PER_PAGE);
 
         const res = await fetch(
-          `http://localhost:8000/api/ebooks?${params.toString()}`,
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/ebooks?${params.toString()}`,
         );
         const data = await res.json();
         if (Array.isArray(data)) {
