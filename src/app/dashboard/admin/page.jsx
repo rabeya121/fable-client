@@ -179,7 +179,7 @@ export default function AdminDashboard() {
                   data={genreData}
                   cx="50%"
                   cy="50%"
-                  outerRadius={80}
+                  outerRadius={65}
                   dataKey="value"
                   label={({ name, percent }) =>
                     `${name} ${(percent * 100).toFixed(0)}%`
@@ -285,11 +285,14 @@ export default function AdminDashboard() {
             Publish, unpublish, delete ebooks
           </p>
         </a>
+        
+       
 
         <a
           href="/dashboard/admin/transactions"
           className="bg-[#1e293b] rounded-2xl border border-gray-800 p-6 hover:border-[#6366f1]/40 transition"
         >
+
           <div className="w-12 h-12 bg-yellow-500/20 rounded-xl flex items-center justify-center mb-4">
             <RiMoneyDollarCircleLine className="text-yellow-400 text-2xl" />
           </div>
@@ -297,6 +300,8 @@ export default function AdminDashboard() {
           <p className="text-gray-400 text-sm">View all payment transactions</p>
         </a>
       </div>
+
+      
     </div>
   );
 }

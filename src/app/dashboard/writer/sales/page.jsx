@@ -18,8 +18,10 @@ export default function WriterSalesPage() {
     }
   }, [user]);
 
-  const totalRevenue = sales.reduce((acc, s) => acc + (s.amount || 0), 0);
-
+  const totalRevenue = sales.reduce(
+    (acc, s) => acc + (s.price || s.amount || 0),
+    0,
+  );
   return (
     <div>
       <div className="mb-8">
@@ -35,7 +37,9 @@ export default function WriterSalesPage() {
           </div>
           <div>
             <p className="text-gray-400 text-sm">Total Revenue</p>
-            <p className="text-white text-3xl font-bold">${totalRevenue.toFixed(2)}</p>
+            <p className="text-white text-3xl font-bold">
+              ${totalRevenue.toFixed(2)}
+            </p>
           </div>
         </div>
       </div>
@@ -45,7 +49,10 @@ export default function WriterSalesPage() {
         {loading ? (
           <div className="p-6 space-y-3">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-12 bg-[#0f172a] rounded-lg animate-pulse" />
+              <div
+                key={i}
+                className="h-12 bg-[#0f172a] rounded-lg animate-pulse"
+              />
             ))}
           </div>
         ) : sales.length === 0 ? (
@@ -67,11 +74,21 @@ export default function WriterSalesPage() {
               <tbody className="divide-y divide-gray-800">
                 {sales.map((sale, i) => (
                   <tr key={i} className="hover:bg-[#0f172a] transition">
-                    <td className="px-6 py-4 text-white text-sm font-medium">{sale.ebookTitle}</td>
-                    <td className="px-6 py-4 text-gray-400 text-sm">{sale.userEmail}</td>
-                    <td className="px-6 py-4 text-green-400 text-sm font-bold">${sale.amount}</td>
+                    <td className="px-6 py-4 text-white text-sm font-medium">
+                      {sale.ebookTitle}
+                    </td>
                     <td className="px-6 py-4 text-gray-400 text-sm">
-                      {new Date(sale.createdAt).toLocaleDateString()}
+                      {sale.userEmail}
+                    </td>
+                    <td className="px-6 py-4 text-green-400 text-sm font-bold">
+                      ${sale.price || sale.amount || 0}
+                    </td>
+                    <td className="px-6 py-4 text-gray-400 text-sm">
+                      {sale.purchasedAt
+                        ? new Date(sale.purchasedAt).toLocaleDateString()
+                        : sale.createdAt
+                          ? new Date(sale.createdAt).toLocaleDateString()
+                          : "N/A"}
                     </td>
                   </tr>
                 ))}

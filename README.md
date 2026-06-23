@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 📚 Fable – Ebook Sharing Platform
 
-## Getting Started
+Fable is a modern digital platform that connects ebook lovers and readers with talented writers. Browse, discover, purchase, and read original ebooks — all in one place.
 
-First, run the development server:
+## 🌐 Live URL
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+🔗 [https://your-fable-live-url.vercel.app](https://your-fable-live-url.vercel.app)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+> **Admin Credentials**
+> - Email: `admin@fable.com`
+> - Password: `Admin@123`
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🎯 Purpose
 
-## Learn More
+Traditional ebook reading is often limited to bookstores or libraries. Fable democratizes access to literature, enables emerging writers to reach global audiences, and provides a secure, streamlined reading and publishing experience.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## ✨ Key Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 👤 Authentication
+- Email/password registration and login
+- Google OAuth login via BetterAuth
+- JWT-based session management (expires in 7 days)
+- Role selection after registration: **User (Reader)** or **Writer**
 
-## Deploy on Vercel
+### 📖 Browse & Discovery
+- Browse all published ebooks without login
+- Search by title or writer name
+- Filter by genre, price range, and availability
+- Sort by newest, price low-to-high, price high-to-low
+- Paginated ebook listing (6–12 per page)
+- Skeleton loaders for smooth UX
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 🛒 Ebook Details & Purchase
+- Full ebook info: cover image, title, writer, description, price, genre
+- Stripe Checkout integration for secure purchase
+- Full content unlocked after purchase
+- Bookmark ebooks for later
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### ✍️ Writer Dashboard (`/dashboard/writer`)
+- Add, edit, delete, publish/unpublish ebooks
+- Upload cover images via imgBB API
+- View sales history with buyer details
+
+### 🛡️ Admin Dashboard (`/dashboard/admin`)
+- Manage all users: change roles, delete users
+- Manage all ebooks: publish/unpublish, delete
+- View all transactions (publishing fees + purchases)
+- Analytics: total users, writers, ebooks, revenue
+- Monthly sales bar chart & ebooks by genre pie chart
+
+### 📋 User Dashboard (`/dashboard/user`)
+- Purchase history table
+- Purchased ebooks gallery
+- Bookmarked ebooks gallery
+- Profile management
+
+### 💳 Payment System
+- Stripe Checkout for ebook purchases
+- Secure payment flow with success/failure handling

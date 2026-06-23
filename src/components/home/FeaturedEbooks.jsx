@@ -10,7 +10,7 @@ export default function FeaturedEbooks() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/ebooks/featured`)
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ebooks/featured`)
       .then((res) => res.json())
       .then((data) => setEbooks(data))
       .catch(() => setEbooks([]))

@@ -1,40 +1,40 @@
 "use client";
-import { useEffect, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
+import { useEffect, Suspense, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { RiCheckboxCircleLine } from "react-icons/ri";
 
 function SuccessContent() {
   const searchParams = useSearchParams();
-  const { user } = useAuth();
-  const router = useRouter();
+  const hasSaved = useRef(false);
 
   const ebookId = searchParams.get("ebookId");
   const userEmail = searchParams.get("userEmail");
 
   useEffect(() => {
-    if (ebookId && userEmail) {
-      // আগে ebook details fetch করো
-      fetch(`http://localhost:8000/api/ebooks/${ebookId}`)
-        .then((res) => res.json())
-        .then((ebook) => {
-          // তারপর purchase save করো
-          fetch(`http://localhost:8000/api/payment/save-purchase`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              ebookId,
-              userEmail,
-              ebookTitle: ebook.title,
-              price: ebook.price,
-              writerEmail: ebook.writerEmail,
-              writerName: ebook.writerName,
-              coverImage: ebook.coverImage,
-            }),
-          });
+    if (!ebookId || !userEmail || hasSaved.current) return;
+    hasSaved.current = true;
+
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ebooks/${ebookId}`)
+      .then((res) => res.json())
+      .then((ebook) => {
+        return fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/payment/save-purchase`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ebookId,
+            userEmail,
+            ebookTitle: ebook.title,
+            price: ebook.price,
+            writerEmail: ebook.writerEmail,
+            writerName: ebook.writerName,
+            coverImage: ebook.coverImage,
+          }),
         });
-    }
+      })
+      .then((res) => res.json())
+      .then((data) => console.log("Purchase saved:", data))
+      .catch((err) => console.error("Failed:", err));
   }, [ebookId, userEmail]);
 
   return (

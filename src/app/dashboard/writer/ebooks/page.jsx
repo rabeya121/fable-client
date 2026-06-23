@@ -20,7 +20,9 @@ export default function WriterEbooksPage() {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    if (user?.email) {
+    console.log("user:", user);
+    if (user?.email)
+       {
       fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/ebooks/writer/${user.email}`,
       )

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+
 import {
   RiBookOpenLine,
   RiArrowLeftLine,
@@ -25,6 +26,7 @@ export default function EbookDetailsPage() {
   const [bookmarked, setBookmarked] = useState(false);
   const [purchased, setPurchased] = useState(false);
   const [purchasing, setPurchasing] = useState(false);
+  
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ebooks/${id}`)
@@ -65,7 +67,7 @@ export default function EbookDetailsPage() {
   const handlePurchase = async () => {
     if (!user) {
       toast.error("Please login to purchase!");
-      router.push(`/login?callbackUrl=/ebooks/${id}`);
+      router.push(`/login?redirect=/ebooks/${id}`);
       return;
     }
     setPurchasing(true);

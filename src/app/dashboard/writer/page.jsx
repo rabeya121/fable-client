@@ -16,37 +16,63 @@ export default function WriterDashboard() {
   const [ebooks, setEbooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [bookmarks, setBookmarks] = useState([]);
+  const [sales, setSales] = useState([]);
 
   useEffect(() => {
-  if (user?.email) {
-    // ebooks fetch
-    fetch(`http://localhost:8000/api/ebooks/writer/${user.email}`)
-      .then((res) => res.json())
-      .then((data) => setEbooks(Array.isArray(data) ? data : []))
-      .catch(() => setEbooks([]))
-      .finally(() => setLoading(false));
+    if (user?.email) {
+      // ebooks fetch
+      fetch(`http://localhost:8000/api/ebooks/writer/${user.email}`)
+        .then((res) => res.json())
+        .then((data) => setEbooks(Array.isArray(data) ? data : []))
+        .catch(() => setEbooks([]))
+        .finally(() => setLoading(false));
 
-    // bookmarks fetch
-    fetch(`http://localhost:8000/api/bookmarks/${user.email}`)
-      .then((res) => res.json())
-      .then((data) => setBookmarks(Array.isArray(data) ? data : []))
-      .catch(() => setBookmarks([]));
-  }
-}, [user]);
+      // bookmarks fetch
+      fetch(`http://localhost:8000/api/bookmarks/${user.email}`)
+        .then((res) => res.json())
+        .then((data) => setBookmarks(Array.isArray(data) ? data : []))
+        .catch(() => setBookmarks([]));
+    }
 
-  const totalSales = ebooks.reduce((acc, e) => acc + (e.sales || 0), 0);
-  const totalRevenue = ebooks.reduce(
-    (acc, e) => acc + (e.sales || 0) * e.price,
+    // sales fetch
+    fetch(`http://localhost:8000/api/sales/writer/${user.email}`)
+      .then((res) => res.json())
+      .then((data) => setSales(Array.isArray(data) ? data : []))
+      .catch(() => setSales([]));
+  }, [user]);
+
+  const totalSales = sales.length;
+  const totalRevenue = sales.reduce(
+    (acc, s) => acc + (s.price || s.amount || 0),
     0,
   );
-  const totalBookmarks = 0;
 
- const stats = [
-  { label: "Published Stories", value: ebooks.length, icon: RiBookOpenLine, color: "bg-blue-500/20 text-blue-400" },
-  { label: "Total Sales", value: totalSales, icon: RiMoneyDollarCircleLine, color: "bg-yellow-500/20 text-yellow-400" },
-  { label: "Bookmarks", value: bookmarks.length, icon: RiHeartLine, color: "bg-pink-500/20 text-pink-400" },
-  { label: "Revenue", value: `$${totalRevenue.toFixed(2)}`, icon: RiDashboardLine, color: "bg-green-500/20 text-green-400" },
-];
+  const stats = [
+    {
+      label: "Published Stories",
+      value: ebooks.length,
+      icon: RiBookOpenLine,
+      color: "bg-blue-500/20 text-blue-400",
+    },
+    {
+      label: "Total Sales",
+      value: totalSales,
+      icon: RiMoneyDollarCircleLine,
+      color: "bg-yellow-500/20 text-yellow-400",
+    },
+    {
+      label: "Bookmarks",
+      value: bookmarks.length,
+      icon: RiHeartLine,
+      color: "bg-pink-500/20 text-pink-400",
+    },
+    {
+      label: "Revenue",
+      value: `$${totalRevenue.toFixed(2)}`,
+      icon: RiDashboardLine,
+      color: "bg-green-500/20 text-green-400",
+    },
+  ];
 
   return (
     <div>
