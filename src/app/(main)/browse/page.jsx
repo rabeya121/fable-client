@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, useCallback, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 import EbookCard from "@/components/ebook/EbookCard";
 import {
   RiSearchLine,
@@ -37,10 +38,12 @@ const ITEMS_PER_PAGE = 9;
 function BrowsePageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { user } = useAuth();
 
   const [ebooks, setEbooks] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [purchasedIds, setPurchasedIds] = useState([]);
 
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const [activeGenre, setActiveGenre] = useState(
@@ -98,6 +101,25 @@ function BrowsePageContent() {
     fetchEbooks();
     updateURL({ search, genre: activeGenre, sort, page });
   }, [search, activeGenre, sort, page]);
+
+  // Fetch purchased ebook IDs
+  useEffect(() => {
+    const fetchPurchased = async () => {
+      if (!user) return;
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/purchases/my`,
+          { credentials: "include" }
+        );
+        const data = await res.json();
+        const ids = data.map((p) => p.ebookId);
+        setPurchasedIds(ids);
+      } catch (error) {
+        console.error("Failed to fetch purchases:", error);
+      }
+    };
+    fetchPurchased();
+  }, [user]);
 
   const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
 
@@ -243,7 +265,11 @@ function BrowsePageContent() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {ebooks.map((ebook) => (
-              <EbookCard key={ebook._id} ebook={ebook} />
+              <EbookCard
+                key={ebook._id}
+                ebook={ebook}
+                isPurchased={purchasedIds.includes(ebook._id)}
+              />
             ))}
           </div>
         )}
