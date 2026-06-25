@@ -5,10 +5,10 @@ export default function Footer() {
   return (
     <footer className="bg-[#0f172a] text-gray-400 pt-12 pb-6">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
           
           {/* Brand */}
-          <div>
+          <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-[#6366f1] mb-3">
               <RiBookOpenLine />
               Fable
@@ -39,7 +39,7 @@ export default function Footer() {
           </div>
 
           {/* Newsletter */}
-          <div>
+          <div className="col-span-2 md:col-span-1">
             <h4 className="text-white font-semibold mb-4">Newsletter</h4>
             <p className="text-sm mb-3">Stay updated with new ebooks and writers.</p>
             <div className="flex gap-2">
