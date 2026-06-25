@@ -21,11 +21,11 @@ export default function TopWriters() {
   }, []);
 
   return (
-    <section className="py-16 px-4">
+    <section className="py-16 px-4 bg-[#0f172a]">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-10">
-          <h2 className="text-3xl font-bold text-white mb-2">Top Writers</h2>
+        <div className="mb-10 text-center ">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Top Writers</h2>
           <p className="text-gray-400">Celebrating authors loved by readers.</p>
         </div>
 
