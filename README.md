@@ -4,11 +4,15 @@ Fable is a modern digital platform that connects ebook lovers and readers with t
 
 ## 🌐 Live URL
 
-🔗 [https://your-fable-live-url.vercel.app](https://your-fable-live-url.vercel.app)
+🔗 [https://fable-client-omega.vercel.app](https://fable-client-omega.vercel.app)
 
 > **Admin Credentials**
 > - Email: `rabeya@gmail.com`
 > - Password: `Rabeya123`
+&&
+> - Email: `admin@fable.com`
+> - Password: `Admin@123`
+
 
 ---
 
