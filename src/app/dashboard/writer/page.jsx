@@ -18,28 +18,28 @@ export default function WriterDashboard() {
   const [bookmarks, setBookmarks] = useState([]);
   const [sales, setSales] = useState([]);
 
-  useEffect(() => {
-    if (user?.email) {
-      // ebooks fetch
-      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ebooks/writer/${user.email}`)
-        .then((res) => res.json())
-        .then((data) => setEbooks(Array.isArray(data) ? data : []))
-        .catch(() => setEbooks([]))
-        .finally(() => setLoading(false));
+ useEffect(() => {
+  if (!user?.email) return;
 
-      // bookmarks fetch
-      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/bookmarks/${user.email}`)
-        .then((res) => res.json())
-        .then((data) => setBookmarks(Array.isArray(data) ? data : []))
-        .catch(() => setBookmarks([]));
-    }
+  setLoading(true);
 
-    // sales fetch
-    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/sales/writer/${user.email}`)
-      .then((res) => res.json())
-      .then((data) => setSales(Array.isArray(data) ? data : []))
-      .catch(() => setSales([]));
-  }, [user]);
+  Promise.all([
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ebooks/writer/${user.email}`).then(res => res.json()),
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/bookmarks/${user.email}`).then(res => res.json()),
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/sales/writer/${user.email}`).then(res => res.json()),
+  ])
+    .then(([ebooksData, bookmarksData, salesData]) => {
+      setEbooks(Array.isArray(ebooksData) ? ebooksData : []);
+      setBookmarks(Array.isArray(bookmarksData) ? bookmarksData : []);
+      setSales(Array.isArray(salesData) ? salesData : []);
+    })
+    .catch((err) => {
+      console.error(err);
+    })
+    .finally(() => {
+      setLoading(false);
+    });
+}, [user?.email]);
 
   const totalSales = sales.length;
   const totalRevenue = sales.reduce(

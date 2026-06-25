@@ -4,9 +4,8 @@ import { RiBookOpenLine } from "react-icons/ri";
 export default function EbookCard({ ebook, isPurchased = false }) {
   return (
     <div className="bg-[#1e293b] rounded-xl overflow-hidden border border-gray-800 hover:border-[#6366f1]/40 transition duration-300">
-      
       {/* Cover Image */}
-      <div className="h-56 bg-[#0f172a] flex items-center justify-center overflow-hidden relative">
+      <div className="h-96 bg-[#1e293b] rounded-2xl overflow-hidden border border-gray-800 shadow-xl relative">
         {ebook.coverImage ? (
           <img
             src={ebook.coverImage}
@@ -14,12 +13,14 @@ export default function EbookCard({ ebook, isPurchased = false }) {
             className="w-full h-full object-cover"
           />
         ) : (
-          <RiBookOpenLine className="text-6xl text-[#6366f1]/40" />
+          <div className="w-full h-full flex items-center justify-center">
+            <RiBookOpenLine className="text-8xl text-[#6366f1]/30" />
+          </div>
         )}
 
-        {/* Sold Badge */}
+        {/* Badge on cover */}
         {isPurchased && (
-          <span className="absolute top-2 left-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+          <span className="absolute top-3 left-3 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
             ✓ Purchased
           </span>
         )}
